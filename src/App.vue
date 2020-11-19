@@ -5,13 +5,18 @@
   </div>
 </template>
 
-<script>
-import FooterGuide from "@/components/FooterGuide/FooterGuide";
-export default {
-  components: {
-    FooterGuide
+<script type="text/ecmascript-6">
+  import FooterGuide from "@/components/FooterGuide/FooterGuide";
+
+  export default {
+    async mounted() {
+      this.$store.dispatch('getAddress')
+    },
+
+    components: {
+      FooterGuide
+    }
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">

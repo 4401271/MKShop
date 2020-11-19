@@ -1,5 +1,5 @@
 <template>
-  <div class="footer-guide">
+  <div class="footer-guide" v-show="$route.meta.isShow">
 
     <span class="guide-item" :class="{on: $route.path === '/msite'}" @click="goto('/msite')">
       <span class="item-icon">
@@ -41,8 +41,15 @@
     name: "FooterGuide",
     methods: {
       goto(path){
-        /*push和replace表示需不需要回退效果*/
-        this.$router.replace(path)
+        if (path !== this.$route.path){
+          // 设置在不同路由之间切换进行路由转换
+          // push有回退效果，replace没有回退效果
+          this.$router.replace(path)
+        }else {
+          // 当请求与当前路由相同时，对当前页面进行刷新，即对当前页面再次发送请求
+          window.location = path  // 发送一般http请求，会导致整个页面刷新
+
+        }
       }
     }
   }
@@ -59,17 +66,18 @@
     bottom 0
     height 55px
     width 100%
+    background white
     .guide-item
       display flex
       flex-direction column
       text-align center
       width: 25%
       .item-icon
-        margin-top: 5px
+        margin-top: 7px
         i
           font-size: 23px
       .item-title
-        margin-top: 1px
+        margin-top: 4px
         font-size: 12px
     /*时刻主意好这个层级关系*/
     .on
