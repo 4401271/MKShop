@@ -3,7 +3,7 @@
 
     <span class="guide-item" :class="{on: $route.path === '/msite'}" @click="goto('/msite')">
       <span class="item-icon">
-        <i class="iconfont iconwaimaixinxi"></i>
+        <i class="iconfont iconchangjinglu1"></i>
       </span>
       <span class="item-title">首页</span>
     </span>

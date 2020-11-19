@@ -18,7 +18,7 @@
 	http://localhost:4000/position/:geohash
 
 ### 示例：
-[http://localhost:4000/position/40.10038,116.36867](http://localhost:4000/position/40.10038,116.36867)
+[http://localhost:4000/position/22.297088,114.178196](http://localhost:4000/position/22.297088,114.178196)
 
 ### 请求方式：
 	GET
@@ -33,12 +33,12 @@
 	{
       "code": 0,
       "data": {
-        "address": "北京市昌平区337省道",
-        "city": "北京市",
-        "geohash": "40.10038,116.36867",
-        "latitude": "40.10038",
-        "longitude": "116.36867",
-        "name": "昌平区北七家宏福科技园(337省道北)"
+       "address": "香港特别行政区油尖旺区加连威老道8号",
+       "city": "香港特别行政区",
+       "geohash": "22.297088,114.178196",
+       "latitude": "22.297088",
+       "longitude": "114.178196",
+       "name": "尖沙咀The One(尖沙咀店)"
       }
     }
 

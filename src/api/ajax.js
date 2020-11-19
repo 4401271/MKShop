@@ -27,7 +27,6 @@ const instance = axios.create({
 
 // 添加请求拦截器
 instance.interceptors.request.use((config)=>{
-  console.log('req interceptor')
   // 3. 对post请求参数进行urlencoded处理, 而不使用默认的json方式(后台接口不支持)
   const data = config.data
   if (data instanceof Object){
@@ -39,8 +38,6 @@ instance.interceptors.request.use((config)=>{
 // 添加响应拦截器
 instance.interceptors.response.use(
   response => {
-    console.log('res interceptor')
-
     // 2. 异步请求成功的数据不是response, 而是response.data
     return response.data
   },

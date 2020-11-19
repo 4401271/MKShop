@@ -2,7 +2,7 @@
   <section class="msite">
     <!--首页头部-->
 
-    <Header title="河南省南阳市宛城区南阳理工学院(长江路80号)">
+    <Header :title="address.name || '正在定位中...'">
       <span class="header_search" slot="header_left">
         <i class="iconfont iconsousuo"></i>
       </span>
@@ -365,9 +365,14 @@
 <script>
   import Swiper from 'swiper'
   import 'swiper/swiper-bundle.css'
+  import {mapState} from 'vuex'
 
   export default {
     name: "Msite",
+    computed:{
+      ...mapState(['address'])
+    },
+    
     mounted() {
       new Swiper ('.swiper-container', {
         loop: true, // 循环模式选项

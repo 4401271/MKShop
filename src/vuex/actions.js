@@ -11,7 +11,7 @@ export default {
     const result = await reqAddress(long, lat)
 
     // 请求成功后，提交给mutation
-    if (result.data === 0){
+    if (result.code === 0){
       const address = result.data
       commit(RECEIVE_ADDRESS, address)
     }
