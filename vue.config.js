@@ -29,6 +29,7 @@ module.exports = {
   },
 
   devServer: {
+    host: '0.0.0.0',
     // 处理以/api开头的路径
     proxy: {
       '/api': {

@@ -60,9 +60,10 @@ export default {
       color #222222
       text-align center
       .header_title_text
-        font-size 16px
+        font-size 17px
         color #222222
         display block
+        font-weight: 550
     .header_login
       font-size 14px
       color #222222

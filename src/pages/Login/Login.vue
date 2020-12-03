@@ -4,57 +4,162 @@
       <div class="login_header">
         <h2 class="login_logo">美困外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;">密码登录</a>
+          <a href="javascript:;" :class="{on: isShowSms}" @click="isShowSms = true">短信登录</a>
+          <a href="javascript:;" :class="{on: !isShowSms}" @click="isShowSms = false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class="on">
+          <div  :class="{on: isShowSms}">
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button disabled="disabled" class="get_verification">获取验证码</button>
+              <input type="tel" maxlength="11" placeholder="手机号"
+                     v-model="phone" name="phone" v-validate="'required|mobile'">
+              <button :disabled="!isRightPhone || computeTime > 0" class="get_verification" :class="{right_phone_number: isRightPhone}" @click.prevent="sendCode" >
+                {{computeTime>0 ? `短信已发送(${computeTime}s)` : '发送验证码'}}
+              </button>
+              <span style="color: red;" v-show="errors.has('phone')">{{ errors.first('phone') }}</span>
             </section>
             <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码">
+              <input type="text" placeholder="验证码"
+                     v-model="code" name="code" v-validate="{required: true,regex: /^\d{6}$/}">
+              <span style="color: red;" v-show="errors.has('code')">{{ errors.first('code') }}</span>
             </section>
             <section class="login_hint">
               温馨提示：未注册美困外卖帐号的手机号，登录时将自动注册，且代表已同意
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div  :class="{on: !isShowSms}">
             <section>
-              <section class="login_message">
-                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
+              <section class="login_message" >
+                <input type="text" placeholder="手机/邮箱/用户名"
+                       v-model="name" name="name" v-validate="'required'">
+                <span style="color: red;" v-show="errors.has('name')">{{ errors.first('name') }}</span>
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input :type="isShowPwd? 'text' : 'password'" placeholder="密码"
+                       v-model="pwd" name="pwd" v-validate="'required'">
+                <div class="switch_button" :class="isShowPwd? 'on' : 'off'" @click="isShowPwd = !isShowPwd">
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>
+                  <span class="switch_text">{{isShowPwd? 'abc': ''}}</span>
                 </div>
+                <span style="color: red;" v-show="errors.has('pwd')">{{ errors.first('pwd') }}</span>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <input type="text" maxlength="11" placeholder="验证码"
+                       v-model="captcha" name="captcha" v-validate="{required: true,regex: /^[0-9a-zA-Z]{4}$/}">
+                <img ref="captcha" class="get_verification" :src="isShowSms ? '' : '/api/captcha'" alt="captcha" @click="updateCaptcha">
+                <span style="color: red;" v-show="errors.has('captcha')">{{ errors.first('captcha') }}</span>
               </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit" @click.prevent="login">登录</button>
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
-      <a href="javascript:" class="go_back">
-        <i class="iconfont iconjiantou2"></i>
+      <a href="javascript:" class="go_back" @click="$router.back()">
+        <i class="iconfont iconjiantou2" @click="$router.replace('/profile')"></i>
       </a>
     </div>
   </section>
 </template>
 
 <script>
+import { Toast, MessageBox } from 'mint-ui'
 export default {
-name: "Login"
+  name: "Login",
+  data(){
+    return {
+      phone: '', // 手机号
+      code: '', // 短信验证码
+      name: '', // 用户名
+      pwd: '', // 密码
+      captcha: '', // 图形验证码
+      computeTime: 0, // 计时剩余时间
+      isShowSms: true,  // false表示账号密码登录，true表示短信登录
+      isShowPwd: false,   // 是否显密码
+    }
+  },
+  computed: {
+    // 判断手机号的格式是否正确
+    isRightPhone() {
+      return /^1\d{10}$/.test(this.phone)
+    }
+  },
+  methods: {
+    /* 发送短信验证码 */
+    async sendCode () {
+      // 设置computeTime为最大值
+      this.computeTime = 10
+      // 启动循环定时器, 每隔1s将computeTime减1
+      const intervalId = setInterval(() => {
+        console.log('-------')
+        this.computeTime--
+        // 当计时为0, 停止计时
+        if (this.computeTime<=0) {
+          clearInterval(intervalId)
+        }
+      }, 1000);
+
+      // 发请求 ==> 发短信的接口
+      const result = await this.$API1.reqSendCode(this.phone)
+      if (result.code===0) {
+        Toast('短信发送成功!')
+      } else {
+        // 停止计时
+        this.computeTime = 0
+        MessageBox('提示', result.msg);
+      }
+    },
+
+    /*
+    登陆
+    */
+    async login () {
+      // 进行前台表单验证
+      let names
+      if (this.isShowSms) {  // 短信登录
+        names = ['phone', 'code']
+      } else {  // 账号密码登录
+        names = ['name', 'pwd', 'captcha']
+      }
+
+      const success = await this.$validator.validateAll(names) // 对指定的所有表单项进行验证
+
+      if (success) {
+        const {phone, code, name, pwd, captcha} = this
+        // 验证通过后发登陆的请求
+        let result
+        if (this.isShowSms) {
+          result = await this.$API1.reqSmsLogin({phone, code})
+          this.code = ''
+        } else {
+          result = await this.$API1.reqPwdLogin({name, pwd, captcha})
+          this.updateCaptcha()
+          this.captcha = ''
+        }
+
+        // 根据请求的结果进行处理
+        if (result.code===0) { // 登陆请求成功
+          const user = result.data
+          // 保存user到state
+          this.$store.dispatch('saveUser', user)
+          // 跳转到个人中心
+          this.$router.replace({path:'/profile'})
+        } else { // 登陆请求失败
+          MessageBox.alert(result.msg)
+        }
+      }
+    },
+
+    /*
+    更新图形验证码
+    */
+    updateCaptcha () {
+      // 如何让浏览器对图片重新请求: 图片地址携带一个时间戳参数
+      this.$refs.captcha.src = 'http://localhost:4000/captcha?time='+ Math.floor(Date.now()/1000)
+    },
+  }
 }
 </script>
 
@@ -72,19 +177,19 @@ name: "Login"
         .login_logo
           font-size 40px
           font-weight bold
-          color #02a774
+          color #FFD000
           text-align center
         .login_header_title
           padding-top 40px
           text-align center
           >a
-            color #333
+            color #999
             font-size 14px
             padding-bottom 4px
             &:first-child
               margin-right 40px
             &.on
-              color #02a774
+              color #FFD000
               font-weight 700
               border-bottom 2px solid #02a774
       .login_content
@@ -119,6 +224,8 @@ name: "Login"
                 color #ccc
                 font-size 14px
                 background transparent
+                &.right_phone_number
+                  color black
             .login_verification
               position relative
               margin-top 16px
@@ -158,6 +265,8 @@ name: "Login"
                   background #fff
                   box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
                   transition transform .3s
+                  &.right
+                    transform translateX(29px)
             .login_hint
               margin-top 12px
               color #999
@@ -171,7 +280,7 @@ name: "Login"
             height 42px
             margin-top 30px
             border-radius 4px
-            background #4cd96f
+            background #FFD000
             color #fff
             text-align center
             font-size 16px

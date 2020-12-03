@@ -5,19 +5,19 @@
     <section class="profile-number">
       <a href="javascript:" class="profile-link">
         <div class="profile_image">
-          <i class="iconfont icongeren1"></i>
+          <i class="iconfont icongeren2"></i>
         </div>
         <div class="user-info">
-          <p class="user-info-top" @click="$router.push('/login')">登录/注册</p>
-          <p class="user-number">
+          <p class="user-info-top" @click="$router.push(user._id ? '/userinfo' : '/login')" v-if="!user.phone">{{user.name ? user.name : '登录|注册'}}</p>
+          <p class="user-number" >
             <span class="user-icon">
               <i class="iconfont iconshouji"></i>
             </span>
-            <span class="icon-mobile-number">暂无绑定手机号</span>
+            <span class="icon-mobile-number">{{user.phone ? user.phone : '暂无绑定手机号'}}</span>
           </p>
         </div>
         <span class="arrow">
-            <i class="iconfont icon-jiantou1"></i>
+            <i class="iconfont iconjiantou3" @click="$router.push(user._id ? '/userinfo' : '/login')"></i>
           </span>
       </a>
     </section>
@@ -46,7 +46,7 @@
         <div class="my_order_div">
           <span>我的订单</span>
           <span class="my_order_icon">
-              <i class="iconfont icon-jiantou1"></i>
+              <i class="iconfont iconjiantou"></i>
             </span>
         </div>
       </a>
@@ -58,7 +58,7 @@
         <div class="my_order_div">
           <span>积分商城</span>
           <span class="my_order_icon">
-              <i class="iconfont icon-jiantou1"></i>
+              <i class="iconfont iconjiantou"></i>
             </span>
         </div>
       </a>
@@ -68,9 +68,9 @@
             <i class="iconfont iconVIP"></i>
           </span>
         <div class="my_order_div">
-          <span>硅谷外卖会员卡</span>
+          <span>会员中心</span>
           <span class="my_order_icon">
-              <i class="iconfont icon-jiantou1"></i>
+              <i class="iconfont iconjiantou"></i>
             </span>
         </div>
       </a>
@@ -84,17 +84,34 @@
         <div class="my_order_div">
           <span>服务中心</span>
           <span class="my_order_icon">
-              <i class="iconfont icon-jiantou1"></i>
+              <i class="iconfont iconjiantou"></i>
             </span>
         </div>
       </a>
+    </section>
+    <section class="profile_logout"  v-show="user._id">
+      <mt-button class="logout_button" type="danger" @click="logout">退出登录</mt-button>
     </section>
   </section>
 </template>
 
 <script>
+import {mapState} from 'vuex'
+import {MessageBox} from 'mint-ui'
 export default {
-name: "Profile"
+  name: "Profile",
+  computed: {
+    ...mapState(["user"]),
+  },
+  methods:{
+    logout(){
+      MessageBox.confirm("确定要退出登录吗").then(
+        () =>{
+          this.$store.dispatch("logout")
+        }
+      )
+    }
+  }
 }
 </script>
 
@@ -102,6 +119,7 @@ name: "Profile"
   @import '../../common/stylus/mixins.styl'
   .profile //我的
     width 100%
+    overflow hidden
     .profile-number
       margin-top 45.5px
       .profile-link
@@ -117,9 +135,8 @@ name: "Profile"
           border-radius 50%
           overflow hidden
           vertical-align top
-          .icongeren1
-            background #e4e4e4
-            font-size 62px
+          .icongeren2
+            font-size 60px
         .user-info
           float left
           margin-top 8px
@@ -147,9 +164,6 @@ name: "Profile"
           position absolute
           right 15px
           top 40%
-          .icon-jiantou1
-            color #fff
-            font-size 5px
     .profile_info_data
       bottom-border-1px(#e4e4e4)
       width 100%
@@ -207,6 +221,7 @@ name: "Profile"
             margin-left -10px
             font-size 30px
           .icondingdan
+            padding-left: 3px
             color #02a774
             font-size 20px
           .iconjifen
@@ -231,8 +246,11 @@ name: "Profile"
           .my_order_icon
             width 10px
             height 10px
-            .icon-jiantou1
+            .iconjiantou
               color #bbb
               font-size 10px
 
+    .profile_logout
+      .logout_button
+        width: 100%
 </style>
