@@ -15,7 +15,7 @@ module.exports = {
   },
 
   // runtimeCompiler: true,  //解析器，打开就可以使用template，但是我们一般不建议用这个，因为加上解析器会使文件变大
-  // lintOnSave: false, //关闭Eslint的规则
+  lintOnSave: false, //关闭Eslint的规则
   css: {  // 添加postcss配置  vue脚手架定义的
     loaderOptions: {
       postcss: {

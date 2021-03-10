@@ -16,7 +16,7 @@
 import axios from 'axios'
 // query-string可以用来将Object格式的字符串转换为urlencoded的字符串
 import qs from 'qs'
-import { Indicator, Toast, MessageBox } from 'mint-ui';
+import { Toast, MessageBox } from 'mint-ui';  // Indicator
 import store from "@/vuex/store";
 import router from "@/router";
 
@@ -31,7 +31,7 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use((config)=>{
   // 显示请求loading，在请求拦截器中进行控制显示，在响应拦截器中进行控制隐藏
-  Indicator.open();
+  // Indicator.open();
 
   // 3. 对post请求参数进行urlencoded处理, 而不使用默认的json方式(后台接口不支持)
   const data = config.data
@@ -39,7 +39,7 @@ instance.interceptors.request.use((config)=>{
     config.data = qs.stringify(data)
   }
 
-  const token = store.state.token
+  const token = store.state.user.token
   if (token){
     config.headers['Authorization'] = token
   }else{
@@ -59,13 +59,13 @@ instance.interceptors.request.use((config)=>{
 instance.interceptors.response.use(
   response => {
     // 隐藏请求loading
-    Indicator.close();
+    // Indicator.close();
     // 2. 异步请求成功的数据不是response, 而是response.data
     return response.data
   },
   error => {
     // 隐藏请求loading
-    Indicator.close();
+    // Indicator.close();
     // 响应请求时可能出错，出错的信息在error的response中，请求时发现没有token的登录失效问题，或者一些其他问题
     if(!error.response){
       // 此处是由于没有登录而产生的错误

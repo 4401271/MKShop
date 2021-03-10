@@ -5,15 +5,19 @@ import router from './router'
 import {Button} from 'mint-ui'
 import Header from "@/components/Header/Header";
 import Star from "@/components/Star/Star";
+import CartControl from "@/components/CartControl/CartControl";
 // 这种引入文件的方法可以将多个暴露放置在一个对象中，然后通过API.就可以访问各个暴露
 import * as API from "./api"
 import store from "@/vuex/store";
 import './validate'
+import './mock/mock-server'
+import './fiters'
 
 Vue.prototype.$API1 = API
 
 Vue.component('Header', Header)
 Vue.component('Star', Star)
+Vue.component('CartControl', CartControl)
 Vue.component('mt-button', Button)
 
 Vue.config.productionTip = false

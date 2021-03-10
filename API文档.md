@@ -393,6 +393,9 @@
 
 ## 6、用户名密码登陆
      
+### 用户名密码：
+    test  123123
+     
 ### 请求URL：
 	http://localhost:4000/login_pwd
 

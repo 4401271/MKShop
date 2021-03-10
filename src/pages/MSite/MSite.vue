@@ -7,7 +7,7 @@
       </span>
 
       <span class="header_login" slot="header_right">
-        <span class="header_login_text" @click="$router.push('/login')">登录|注册</span>
+        <span class="header_login_text" @click="$router.push('/login')" v-show="!user._id">登录|注册</span>
       </span>
     </Header>
 
@@ -41,7 +41,15 @@
       </div>
       <div class="shop_container">
         <ul class="shop_list" v-if="shops.length>0">
-          <li class="shop_li border-1px" v-for="shop in shops" :key="shop.id">
+          <li class="shop_li border-1px" v-for="shop in shops" :key="shop.id" @click="$router.push(`/shop/${shop.id}`)">
+            <!--
+            这种设置跳转路由的方式，会导致重定向失效！！！
+            @click="$router.push({
+              name: 'shop',
+              params: {
+                id: shop.id
+              }
+            })-->
             <a>
               <div class="shop_left">
                 <img class="shop_img" :src="'https://fuss10.elemecdn.com' + shop.image_path">
@@ -109,7 +117,12 @@
   export default {
     name: "Msite",
     computed:{
-      ...mapState(['address', 'categories', 'shops']),
+      ...mapState({
+        address: state => state.msite.address,
+        categories: state => state.msite.categories,
+        shops: state => state.msite.shops,
+        user: state => state.user.user,
+      }),
 
       /*categoriesArr(){
         const {categories} = this
@@ -136,7 +149,7 @@
 
 
     async mounted() {
-
+ 
       await this.$store.dispatch('getCategories')
       await this.$store.dispatch('getShops')
       // 方法二：dispatch

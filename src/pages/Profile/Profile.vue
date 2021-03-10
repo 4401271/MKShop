@@ -9,7 +9,7 @@
         </div>
         <div class="user-info">
           <p class="user-info-top" @click="$router.push(user._id ? '/userinfo' : '/login')" v-if="!user.phone">{{user.name ? user.name : '登录|注册'}}</p>
-          <p class="user-number" >
+          <p class="user-number">
             <span class="user-icon">
               <i class="iconfont iconshouji"></i>
             </span>
@@ -18,7 +18,7 @@
         </div>
         <span class="arrow">
             <i class="iconfont iconjiantou3" @click="$router.push(user._id ? '/userinfo' : '/login')"></i>
-          </span>
+        </span>
       </a>
     </section>
     <section class="profile_info_data border-1px">
@@ -95,13 +95,17 @@
   </section>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
 import {mapState} from 'vuex'
 import {MessageBox} from 'mint-ui'
 export default {
   name: "Profile",
   computed: {
-    ...mapState(["user"]),
+
+    ...mapState({
+      user: state => state.user.user,
+    }),
+
   },
   methods:{
     logout(){

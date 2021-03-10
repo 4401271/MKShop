@@ -6,16 +6,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import state from "@/vuex/state";
-import mutations from "@/vuex/mutations";
-import getters from "@/vuex/getters";
-import actions from "@/vuex/actions";
+import mutations from "@/vuex/mutations"
+import getters from "@/vuex/getters"
+import actions from "@/vuex/actions"
+import msite from "@/vuex/modules/msite"
+import user from '@/vuex/modules/user'
+import shop from '@/vuex/modules/shop'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state,
-  mutations,
-  getters,
-  actions
+  mutations,  // 总的mutations
+  getters,    // 操作的是总的state
+  actions,
+  modules: {
+    msite,
+    user,
+    shop
+  }
 })

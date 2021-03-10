@@ -1,6 +1,9 @@
 <template>
   <div>
-    <router-view></router-view>
+    <!--在他管理的路由间进行切换，路由不会死亡-->
+    <keep-alive exclude="Search">
+      <router-view></router-view>
+    </keep-alive>
     <FooterGuide/>
   </div>
 </template>
